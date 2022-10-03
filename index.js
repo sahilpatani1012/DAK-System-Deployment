@@ -252,7 +252,7 @@ app.post("/received-section", async (req, res) => {
   querySnap.forEach((docSnap) => {
     temp.push(docSnap.data());
   });
-  if(temp[0].submitted === true){
+  if (temp[0].submitted === true) {
     req.flash("message", "Today's DAK count already submitted!");
     res.redirect("/received-section");
     return;
@@ -1956,6 +1956,9 @@ app.post("/daily-report", async (req, res) => {
       let efficiency = Math.round(
         (allSection[i].disposed / allSection[i].Received) * 100
       );
+      if (isNaN(efficiency)) {
+        efficiency = 0;
+      }
       allSection[i] = {
         ...allSection[i],
         efficiency: efficiency,
@@ -1982,6 +1985,9 @@ app.post("/daily-report", async (req, res) => {
         let efficiency = Math.round(
           (docSnap[0].disposed / docSnap[0].Received) * 100
         );
+        if (isNaN(efficiency)) {
+          efficiency = 0;
+        }
         res.render("DailyReport", {
           date: dateString,
           section: section,
@@ -2023,6 +2029,9 @@ app.post("/monthly-report", async (req, res) => {
         year = data.DateStamp.year;
       });
       let efficiency = Math.round((disposed / received) * 100);
+      if (isNaN(efficiency)) {
+        efficiency = 0;
+      }
       tempObj = {
         section: sections[i],
         disposed: disposed,
@@ -2054,6 +2063,9 @@ app.post("/monthly-report", async (req, res) => {
           disposed += docSnap[i].disposed;
         }
         let efficiency = Math.round((disposed / received) * 100);
+        if (isNaN(efficiency)) {
+          efficiency = 0;
+        }
         res.render("MonthlyReport", {
           month: monthFetched,
           year: yearFetched,

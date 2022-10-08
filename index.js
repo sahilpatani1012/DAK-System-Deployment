@@ -1937,6 +1937,7 @@ app.post("/daily-report", async (req, res) => {
   let dateString = day + "/" + month + "/" + year;
 
   let allSection = [];
+  let prevPendencies = [];
 
   if (section === "All") {
     for (let i = 0; i < sections.length; i++) {
@@ -1946,15 +1947,26 @@ app.post("/daily-report", async (req, res) => {
         where("DateStamp.month", "==", month),
         where("DateStamp.year", "==", year)
       );
+      let queryAll1 = query(
+        collection(database, sections[i]),
+        where("DateStamp.date", "==", day-1),
+        where("DateStamp.month", "==", month),
+        where("DateStamp.year", "==", year)
+      );
       let querySnap = await getDocs(queryAll);
+      let prevquerySnap = await getDocs(queryAll1);
       querySnap.forEach((docFile) => {
         allSection.push(docFile.data());
+      });
+      prevquerySnap.forEach((docFile) => {
+        prevPendencies.push(docFile.data());
       });
     }
     let tempall = [];
     for (let i = 0; i < sections.length; i++) {
+      let denominator = allSection[i].Received + prevPendencies[i].pendency;
       let efficiency = Math.round(
-        (allSection[i].disposed / allSection[i].Received) * 100
+        (allSection[i].disposed / denominator) * 100
       );
       if (isNaN(efficiency)) {
         efficiency = 0;
@@ -1963,6 +1975,7 @@ app.post("/daily-report", async (req, res) => {
         ...allSection[i],
         efficiency: efficiency,
         section: sections[i],
+        denominator: denominator
       };
       tempall.push(allSection[i]);
     }

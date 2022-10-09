@@ -155,7 +155,7 @@ app.get("/", (req, res) => {
 //LOGIN SECTION
 
 app.get("/login", async (req, res) => {
-  let dateObj = new Date(2022,9,7);
+  let dateObj = new Date();
   let date = dateObj.getDate();
   let month = months[dateObj.getMonth()];
   let year = dateObj.getFullYear();
@@ -214,7 +214,7 @@ app.post("/login", (req, res) => {
 //RECEIVED SECTION
 
 app.get("/received-section", (req, res) => {
-  let dateObj = new Date(2022,9,7);
+  let dateObj = new Date();
   let date = dateObj.getDate();
   let month = months[dateObj.getMonth()];
   let year = dateObj.getFullYear();
@@ -238,7 +238,7 @@ app.get("/received-section", (req, res) => {
 });
 
 app.post("/received-section", async (req, res) => {
-  let date = new Date(2022,9,7);
+  let date = new Date();
 
   let q = query(
     collection(database, "Establishment"),
@@ -313,7 +313,7 @@ app.post("/received-section", async (req, res) => {
 //SECTION HEAD SECTION
 
 app.get("/section-head", async (req, res) => {
-  let dateObj = new Date(2022,9,4);
+  let dateObj = new Date();
   let date = dateObj.getDate();
   let month = months[dateObj.getMonth()];
   let year = dateObj.getFullYear();
@@ -1850,7 +1850,7 @@ app.get("/section-head", async (req, res) => {
 });
 
 app.post("/section-head", async (req, res) => {
-  let dateObj = new Date(2022,9,4);
+  let dateObj = new Date();
   let date = dateObj.getDate();
   let month = months[dateObj.getMonth()];
   let year = dateObj.getFullYear();

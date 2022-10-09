@@ -313,7 +313,7 @@ app.post("/received-section", async (req, res) => {
 //SECTION HEAD SECTION
 
 app.get("/section-head", async (req, res) => {
-  let dateObj = new Date();
+  let dateObj = new Date(2022,9,4);
   let date = dateObj.getDate();
   let month = months[dateObj.getMonth()];
   let year = dateObj.getFullYear();
@@ -1850,7 +1850,7 @@ app.get("/section-head", async (req, res) => {
 });
 
 app.post("/section-head", async (req, res) => {
-  let dateObj = new Date();
+  let dateObj = new Date(2022,9,4);
   let date = dateObj.getDate();
   let month = months[dateObj.getMonth()];
   let year = dateObj.getFullYear();

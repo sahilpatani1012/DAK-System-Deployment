@@ -238,7 +238,7 @@ app.get("/received-section", (req, res) => {
 });
 
 app.post("/received-section", async (req, res) => {
-  let date = new Date();
+  let date = new Date(2022,9,4);
 
   let q = query(
     collection(database, "Establishment"),

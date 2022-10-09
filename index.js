@@ -155,7 +155,7 @@ app.get("/", (req, res) => {
 //LOGIN SECTION
 
 app.get("/login", async (req, res) => {
-  let dateObj = new Date();
+  let dateObj = new Date(2022,9,4);
   let date = dateObj.getDate();
   let month = months[dateObj.getMonth()];
   let year = dateObj.getFullYear();
@@ -214,7 +214,7 @@ app.post("/login", (req, res) => {
 //RECEIVED SECTION
 
 app.get("/received-section", (req, res) => {
-  let dateObj = new Date();
+  let dateObj = new Date(2022,9,4);
   let date = dateObj.getDate();
   let month = months[dateObj.getMonth()];
   let year = dateObj.getFullYear();

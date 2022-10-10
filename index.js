@@ -1963,6 +1963,10 @@ app.post("/daily-report", async (req, res) => {
       });
     }
     let tempall = [];
+    if(allSection.length === 0 || prevPendencies.length === 0){
+      res.send("No such record is found!");
+      return;
+    }
     for (let i = 0; i < sections.length; i++) {
       let denominator = allSection[i].Received + prevPendencies[i].pendency;
       let efficiency = Math.round(

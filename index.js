@@ -1949,7 +1949,7 @@ app.post("/daily-report", async (req, res) => {
       );
       let queryAll1 = query(
         collection(database, sections[i]),
-        where("DateStamp.date", "==", day-1),
+        where("DateStamp.date", "==", day - 1),
         where("DateStamp.month", "==", month),
         where("DateStamp.year", "==", year)
       );
@@ -1963,15 +1963,13 @@ app.post("/daily-report", async (req, res) => {
       });
     }
     let tempall = [];
-    if(allSection.length === 0 || prevPendencies.length === 0){
-      res.send("No such record is found!");
+    if (allSection.length === 0 || prevPendencies.length === 0) {
+      res.render("reportError");
       return;
     }
     for (let i = 0; i < sections.length; i++) {
       let denominator = allSection[i].Received + prevPendencies[i].pendency;
-      let efficiency = Math.round(
-        (allSection[i].disposed / denominator) * 100
-      );
+      let efficiency = Math.round((allSection[i].disposed / denominator) * 100);
       if (isNaN(efficiency)) {
         efficiency = 0;
       }
@@ -1979,7 +1977,7 @@ app.post("/daily-report", async (req, res) => {
         ...allSection[i],
         efficiency: efficiency,
         section: sections[i],
-        denominator: denominator
+        denominator: denominator,
       };
       tempall.push(allSection[i]);
     }
@@ -1992,30 +1990,51 @@ app.post("/daily-report", async (req, res) => {
       where("DateStamp.month", "==", month),
       where("DateStamp.year", "==", year)
     );
-    let querySnap = getDocs(q);
-    let docSnap;
-    querySnap
-      .then((response) => {
-        docSnap = response.docs.map((item) => {
-          return item.data();
-        });
-        let efficiency = Math.round(
-          (docSnap[0].disposed / docSnap[0].Received) * 100
-        );
-        if (isNaN(efficiency)) {
-          efficiency = 0;
-        }
-        res.render("DailyReport", {
-          date: dateString,
-          section: section,
-          received: docSnap[0].Received,
-          disposed: docSnap[0].disposed,
-          efficiency: efficiency,
-        });
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    let sectionData = [];
+    let querySnap = await getDocs(q);
+    querySnap.forEach((docFile) => {
+      sectionData.push(docFile.data());
+    });
+    if (sectionData.length === 0) {
+      res.render("reportError");
+      return;
+    }
+    let denominator = sectionData[0].Received + sectionData[0].pendency;
+    let efficiency = sectionData[0].disposed / denominator;
+    if (isNaN(efficiency)) {
+      efficiency = 0;
+    }
+    res.render("DailyReport", {
+      date: dateString,
+      section: section,
+      received: sectionData[0].Received,
+      disposed: sectionData[0].disposed,
+      efficiency: efficiency,
+    });
+    // let querySnap = getDocs(q); //Promises arent efficient
+    // let docSnap;
+    // querySnap
+    //   .then((response) => {
+    //     docSnap = response.docs.map((item) => {
+    //       return item.data();
+    //     });
+    //     let efficiency = Math.round(
+    //       (docSnap[0].disposed / docSnap[0].Received) * 100
+    //     );
+    //     if (isNaN(efficiency)) {
+    //       efficiency = 0;
+    //     }
+    //     res.render("DailyReport", {
+    //       date: dateString,
+    //       section: section,
+    //       received: docSnap[0].Received,
+    //       disposed: docSnap[0].disposed,
+    //       efficiency: efficiency,
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     res.render("/reportError");
+    //   });
   }
 });
 
@@ -2057,6 +2076,10 @@ app.post("/monthly-report", async (req, res) => {
         efficiency: efficiency,
       };
       allSection.push(tempObj);
+      if(allSection[0].DateStamp.month === undefined || allSection[0].DateStamp.year === undefined){
+        res.render("reportError");
+        return;
+      }
     }
     allSection.sort((a, b) => parseInt(b.efficiency) - parseInt(a.efficiency));
     res.render("MonthlyReportAll", { allSection: allSection });
@@ -2066,35 +2089,60 @@ app.post("/monthly-report", async (req, res) => {
       where("DateStamp.month", "==", monthFetched),
       where("DateStamp.year", "==", yearFetched)
     );
-    let querySnap = getDocs(q);
-    let docSnap;
-    querySnap
-      .then((response) => {
-        docSnap = response.docs.map((item) => {
-          return item.data();
-        });
-        let received = 0;
-        let disposed = 0;
-        for (let i = 0; i < docSnap.length; i++) {
-          received += docSnap[i].Received;
-          disposed += docSnap[i].disposed;
-        }
-        let efficiency = Math.round((disposed / received) * 100);
-        if (isNaN(efficiency)) {
-          efficiency = 0;
-        }
-        res.render("MonthlyReport", {
-          month: monthFetched,
-          year: yearFetched,
-          section: section,
-          received: received,
-          disposed: disposed,
-          efficiency: efficiency,
-        });
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    let querySnap = await getDocs(q);
+    let docSnap = [];
+    querySnap.forEach((docFile) => {
+      docSnap.push(docFile.data());
+    });
+
+    if (docSnap.length === 0) {
+      res.render("reportError");
+      return;
+    }
+    let received = 0;
+    let disposed = 0;
+    for (let i = 0; i < docSnap.length; i++) {
+      received += docSnap[i].Received;
+      disposed += docSnap[i].disposed;
+    }
+    let efficiency = Math.round((disposed / received) * 100);
+    if (isNaN(efficiency)) {
+      efficiency = 0;
+    }
+    res.render("MonthlyReport", {
+      month: monthFetched,
+      year: yearFetched,
+      section: section,
+      received: received,
+      disposed: disposed,
+      efficiency: efficiency,
+    });
+    // .then((response) => {   Promises used which arent efficient
+    //   docSnap = response.docs.map((item) => {
+    //     return item.data();
+    //   });
+    //   let received = 0;
+    //   let disposed = 0;
+    //   for (let i = 0; i < docSnap.length; i++) {
+    //     received += docSnap[i].Received;
+    //     disposed += docSnap[i].disposed;
+    //   }
+    //   let efficiency = Math.round((disposed / received) * 100);
+    //   if (isNaN(efficiency)) {
+    //     efficiency = 0;
+    //   }
+    //   res.render("MonthlyReport", {
+    //     month: monthFetched,
+    //     year: yearFetched,
+    //     section: section,
+    //     received: received,
+    //     disposed: disposed,
+    //     efficiency: efficiency,
+    //   });
+    // })
+    // .catch((err) => {
+    //   console.log(err.message);
+    // });
   }
 });
 

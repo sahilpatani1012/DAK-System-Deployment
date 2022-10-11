@@ -307,6 +307,7 @@ app.post("/received-section", async (req, res) => {
       submitted: true,
     });
   }
+  req.flash("message", "DAK Count submitted successfully!");
   res.redirect("/received-section");
 });
 

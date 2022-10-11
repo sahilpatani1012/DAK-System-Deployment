@@ -19,6 +19,7 @@ import {
   query,
   where,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -89,6 +90,9 @@ const sections = [
   "CB Section",
   "Public Grievances",
   "Loans",
+  "Zila Parishad",
+  "ADM North",
+  "ADPS",
 ];
 
 //Database collection functions -----------------------------------------
@@ -117,6 +121,9 @@ const Letter_Dispatch = collection(database, "Letter Dispatch");
 const CB_Section = collection(database, "CB Section");
 const Public_Grievances = collection(database, "Public Grievances");
 const Loans = collection(database, "Loans");
+const Zila_Parishad = collection(database, "Zila Parishad");
+const ADM_North = collection(database, "ADM North");
+const ADPS = collection(database, "ADPS");
 
 //Section Database reference array ------------------------------------------
 const sectionDatabases = [
@@ -144,6 +151,9 @@ const sectionDatabases = [
   CB_Section,
   Public_Grievances,
   Loans,
+  Zila_Parishad,
+  ADM_North,
+  ADPS,
 ];
 
 //Routes --------------------------------------------------------
@@ -283,6 +293,9 @@ app.post("/received-section", async (req, res) => {
     parseInt(req.body.section22DakCount),
     parseInt(req.body.section23DakCount),
     parseInt(req.body.section24DakCount),
+    parseInt(req.body.section25DakCount),
+    parseInt(req.body.section26DakCount),
+    parseInt(req.body.section27DakCount),
   ];
 
   let collectionIDs = [];
@@ -305,10 +318,38 @@ app.post("/received-section", async (req, res) => {
       disposed: 0,
       pendency: DAKsReceived[i],
       submitted: true,
+    })
+      .then(() => {
+        req.flash("message", "DAK Count submitted successfully!");
+        res.redirect("/received-section");
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
+});
+
+app.get("/delete", async (req, res) => {
+  let date = new Date();
+
+  let collectionIDs = [];
+  for (let i = 0; i < sectionDatabases.length; i++) {
+    let q = query(
+      collection(database, sections[i]),
+      where("DateStamp.date", "==", date.getDate()),
+      where("DateStamp.month", "==", months[date.getMonth()]),
+      where("DateStamp.year", "==", date.getFullYear())
+    );
+    let querySnap = await getDocs(q);
+    querySnap.forEach((docSnap) => {
+      collectionIDs.push(docSnap.id);
     });
   }
-  req.flash("message", "DAK Count submitted successfully!");
-  res.redirect("/received-section");
+  for (let i = 0; i < sectionDatabases.length; i++) {
+    let docRef = doc(database, sections[i], collectionIDs[i]);
+    console.log(sections[i],collectionIDs[i]);
+    await deleteDoc(docRef);
+  }
 });
 
 //SECTION HEAD SECTION
@@ -1841,6 +1882,195 @@ app.get("/section-head", async (req, res) => {
               res.send(err.message);
             });
           break;
+        case "zilaparishad.sectionhead@gmail.com":
+          q = query(
+            sectionDatabases[24],
+            where("DateStamp.date", "==", date),
+            where("DateStamp.month", "==", month),
+            where("DateStamp.year", "==", year)
+          );
+          querySnap = getDocs(q);
+          querySnap
+            .then((response) => {
+              sectionInfo = response.docs.map((item) => {
+                return { ...item.data(), id: item.id };
+              });
+              let received;
+              let disposed;
+              let id;
+              if (sectionInfo[0] === undefined) {
+                received = 0;
+                disposed = 0;
+                id = "null";
+              } else {
+                received = sectionInfo[0].Received;
+                disposed = sectionInfo[0].disposed;
+                id = sectionInfo[0].id;
+              }
+              q = query(
+                sectionDatabases[24],
+                where("DateStamp.date", "==", date - 1),
+                where("DateStamp.month", "==", month),
+                where("DateStamp.year", "==", year)
+              );
+              querySnap = getDocs(q);
+              querySnap.then((response) => {
+                prevSectionInfo = response.docs.map((item) => {
+                  return { ...item.data(), id: item.id };
+                });
+                if (prevSectionInfo.length === 0) {
+                  res.render("sectionHead", {
+                    section: sections[24],
+                    date: dateString,
+                    received: received,
+                    disposed: disposed,
+                    oldPendency: 0,
+                    sessionID: id,
+                    message: req.flash("message"),
+                  });
+                } else {
+                  res.render("sectionHead", {
+                    section: sections[24],
+                    date: dateString,
+                    received: received,
+                    disposed: disposed,
+                    oldPendency: prevSectionInfo[0].pendency,
+                    sessionID: id,
+                    message: req.flash("message"),
+                  });
+                }
+              });
+            })
+            .catch((err) => {
+              res.send(err.message);
+            });
+          break;
+        case "admnorth.sectionhead@gmail.com":
+          q = query(
+            sectionDatabases[25],
+            where("DateStamp.date", "==", date),
+            where("DateStamp.month", "==", month),
+            where("DateStamp.year", "==", year)
+          );
+          querySnap = getDocs(q);
+          querySnap
+            .then((response) => {
+              sectionInfo = response.docs.map((item) => {
+                return { ...item.data(), id: item.id };
+              });
+              let received;
+              let disposed;
+              let id;
+              if (sectionInfo[0] === undefined) {
+                received = 0;
+                disposed = 0;
+                id = "null";
+              } else {
+                received = sectionInfo[0].Received;
+                disposed = sectionInfo[0].disposed;
+                id = sectionInfo[0].id;
+              }
+              q = query(
+                sectionDatabases[25],
+                where("DateStamp.date", "==", date - 1),
+                where("DateStamp.month", "==", month),
+                where("DateStamp.year", "==", year)
+              );
+              querySnap = getDocs(q);
+              querySnap.then((response) => {
+                prevSectionInfo = response.docs.map((item) => {
+                  return { ...item.data(), id: item.id };
+                });
+                if (prevSectionInfo.length === 0) {
+                  res.render("sectionHead", {
+                    section: sections[25],
+                    date: dateString,
+                    received: received,
+                    disposed: disposed,
+                    oldPendency: 0,
+                    sessionID: id,
+                    message: req.flash("message"),
+                  });
+                } else {
+                  res.render("sectionHead", {
+                    section: sections[25],
+                    date: dateString,
+                    received: received,
+                    disposed: disposed,
+                    oldPendency: prevSectionInfo[0].pendency,
+                    sessionID: id,
+                    message: req.flash("message"),
+                  });
+                }
+              });
+            })
+            .catch((err) => {
+              res.send(err.message);
+            });
+          break;
+        case "adps.sectionhead@gmail.com":
+          q = query(
+            sectionDatabases[26],
+            where("DateStamp.date", "==", date),
+            where("DateStamp.month", "==", month),
+            where("DateStamp.year", "==", year)
+          );
+          querySnap = getDocs(q);
+          querySnap
+            .then((response) => {
+              sectionInfo = response.docs.map((item) => {
+                return { ...item.data(), id: item.id };
+              });
+              let received;
+              let disposed;
+              let id;
+              if (sectionInfo[0] === undefined) {
+                received = 0;
+                disposed = 0;
+                id = "null";
+              } else {
+                received = sectionInfo[0].Received;
+                disposed = sectionInfo[0].disposed;
+                id = sectionInfo[0].id;
+              }
+              q = query(
+                sectionDatabases[26],
+                where("DateStamp.date", "==", date - 1),
+                where("DateStamp.month", "==", month),
+                where("DateStamp.year", "==", year)
+              );
+              querySnap = getDocs(q);
+              querySnap.then((response) => {
+                prevSectionInfo = response.docs.map((item) => {
+                  return { ...item.data(), id: item.id };
+                });
+                if (prevSectionInfo.length === 0) {
+                  res.render("sectionHead", {
+                    section: sections[26],
+                    date: dateString,
+                    received: received,
+                    disposed: disposed,
+                    oldPendency: 0,
+                    sessionID: id,
+                    message: req.flash("message"),
+                  });
+                } else {
+                  res.render("sectionHead", {
+                    section: sections[26],
+                    date: dateString,
+                    received: received,
+                    disposed: disposed,
+                    oldPendency: prevSectionInfo[0].pendency,
+                    sessionID: id,
+                    message: req.flash("message"),
+                  });
+                }
+              });
+            })
+            .catch((err) => {
+              res.send(err.message);
+            });
+          break;
         default:
           break;
       }
@@ -2077,7 +2307,10 @@ app.post("/monthly-report", async (req, res) => {
         efficiency: efficiency,
       };
       allSection.push(tempObj);
-      if(allSection[0].DateStamp.month === undefined || allSection[0].DateStamp.year === undefined){
+      if (
+        allSection[0].DateStamp.month === undefined ||
+        allSection[0].DateStamp.year === undefined
+      ) {
         res.render("reportError");
         return;
       }

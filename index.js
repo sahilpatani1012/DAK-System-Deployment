@@ -78,13 +78,12 @@ const sections = [
   "Stores",
   "Court",
   "PDR",
-  "IRA",
+  "IRA & DRA",
   "Vigilance",
   "General Administration",
   "Law",
   "Records",
   "Estates",
-  "DRA",
   "Elections",
   "Letter Dispatch",
   "CB Section",
@@ -109,13 +108,13 @@ const Single_Window = collection(database, "Single Window");
 const Stores = collection(database, "Stores");
 const Court = collection(database, "Court");
 const PDR = collection(database, "PDR");
-const IRA = collection(database, "IRA");
+const IRA_DRA = collection(database, "IRA & DRA");
 const Vigilance = collection(database, "Vigilance");
 const General_Administration = collection(database, "General Administration");
 const Law = collection(database, "Law");
 const Records = collection(database, "Records");
 const Estates = collection(database, "Estates");
-const DRA = collection(database, "DRA");
+// const DRA = collection(database, "DRA");
 const Elections = collection(database, "Elections");
 const Letter_Dispatch = collection(database, "Letter Dispatch");
 const CB_Section = collection(database, "CB Section");
@@ -127,33 +126,33 @@ const ADPS = collection(database, "ADPS");
 
 //Section Database reference array ------------------------------------------
 const sectionDatabases = [
-  Establishment,
-  Justice,
-  Revenue,
-  Relief,
-  Panchayat,
-  Development,
-  Accounts,
-  Land_Records,
-  Single_Window,
-  Stores,
-  Court,
-  PDR,
-  IRA,
-  Vigilance,
-  General_Administration,
-  Law,
-  Records,
-  Estates,
-  DRA,
-  Elections,
-  Letter_Dispatch,
-  CB_Section,
-  Public_Grievances,
-  Loans,
-  Zila_Parishad,
-  ADM_North,
-  ADPS,
+  Establishment, //0
+  Justice, //1
+  Revenue, //2
+  Relief, //3
+  Panchayat, //4
+  Development, //5
+  Accounts, //6
+  Land_Records, //7
+  Single_Window, //8
+  Stores, //9
+  Court, //10
+  PDR, //11
+  IRA_DRA, //12
+  Vigilance, //13
+  General_Administration, //14
+  Law, //15
+  Records, //16
+  Estates, //17
+  // DRA,
+  Elections, //18
+  Letter_Dispatch, //19
+  CB_Section, //20
+  Public_Grievances, //21
+  Loans, //22
+  Zila_Parishad, //23
+  ADM_North, //24
+  ADPS, //25
 ];
 
 //Routes --------------------------------------------------------
@@ -287,7 +286,7 @@ app.post("/received-section", async (req, res) => {
     parseInt(req.body.section16DakCount),
     parseInt(req.body.section17DakCount),
     parseInt(req.body.section18DakCount),
-    parseInt(req.body.section19DakCount),
+    // parseInt(req.body.section19DakCount),
     parseInt(req.body.section20DakCount),
     parseInt(req.body.section21DakCount),
     parseInt(req.body.section22DakCount),
@@ -1504,7 +1503,70 @@ app.get("/section-head", async (req, res) => {
               res.send(err.message);
             });
           break;
-        case "dra.sectionhead@gmail.com":
+        // case "dra.sectionhead@gmail.com":
+        //   q = query(
+        //     sectionDatabases[18],
+        //     where("DateStamp.date", "==", date),
+        //     where("DateStamp.month", "==", month),
+        //     where("DateStamp.year", "==", year)
+        //   );
+        //   querySnap = getDocs(q);
+        //   querySnap
+        //     .then((response) => {
+        //       sectionInfo = response.docs.map((item) => {
+        //         return { ...item.data(), id: item.id };
+        //       });
+        //       let received;
+        //       let disposed;
+        //       let id;
+        //       if (sectionInfo[0] === undefined) {
+        //         received = 0;
+        //         disposed = 0;
+        //         id = "null";
+        //       } else {
+        //         received = sectionInfo[0].Received;
+        //         disposed = sectionInfo[0].disposed;
+        //         id = sectionInfo[0].id;
+        //       }
+        //       q = query(
+        //         sectionDatabases[18],
+        //         where("DateStamp.date", "==", date - 1),
+        //         where("DateStamp.month", "==", month),
+        //         where("DateStamp.year", "==", year)
+        //       );
+        //       querySnap = getDocs(q);
+        //       querySnap.then((response) => {
+        //         prevSectionInfo = response.docs.map((item) => {
+        //           return { ...item.data(), id: item.id };
+        //         });
+        //         if (prevSectionInfo.length === 0) {
+        //           res.render("sectionHead", {
+        //             section: sections[18],
+        //             date: dateString,
+        //             received: received,
+        //             disposed: disposed,
+        //             oldPendency: 0,
+        //             sessionID: id,
+        //             message: req.flash("message"),
+        //           });
+        //         } else {
+        //           res.render("sectionHead", {
+        //             section: sections[18],
+        //             date: dateString,
+        //             received: received,
+        //             disposed: disposed,
+        //             oldPendency: prevSectionInfo[0].pendency,
+        //             sessionID: id,
+        //             message: req.flash("message"),
+        //           });
+        //         }
+        //       });
+        //     })
+        //     .catch((err) => {
+        //       res.send(err.message);
+        //     });
+        //   break;
+        case "elections.sectionhead@gmail.com":
           q = query(
             sectionDatabases[18],
             where("DateStamp.date", "==", date),
@@ -1542,7 +1604,7 @@ app.get("/section-head", async (req, res) => {
                 });
                 if (prevSectionInfo.length === 0) {
                   res.render("sectionHead", {
-                    section: sections[18],
+                    section: sections[19],
                     date: dateString,
                     received: received,
                     disposed: disposed,
@@ -1567,7 +1629,7 @@ app.get("/section-head", async (req, res) => {
               res.send(err.message);
             });
           break;
-        case "elections.sectionhead@gmail.com":
+        case "letterdispatch.sectionhead@gmail.com":
           q = query(
             sectionDatabases[19],
             where("DateStamp.date", "==", date),
@@ -1630,7 +1692,7 @@ app.get("/section-head", async (req, res) => {
               res.send(err.message);
             });
           break;
-        case "letterdispatch.sectionhead@gmail.com":
+        case "cbsection.sectionhead@gmail.com":
           q = query(
             sectionDatabases[20],
             where("DateStamp.date", "==", date),
@@ -1693,7 +1755,7 @@ app.get("/section-head", async (req, res) => {
               res.send(err.message);
             });
           break;
-        case "cbsection.sectionhead@gmail.com":
+        case "publicgrievances.sectionhead@gmail.com":
           q = query(
             sectionDatabases[21],
             where("DateStamp.date", "==", date),
@@ -1756,7 +1818,7 @@ app.get("/section-head", async (req, res) => {
               res.send(err.message);
             });
           break;
-        case "publicgrievances.sectionhead@gmail.com":
+        case "loans.sectionhead@gmail.com":
           q = query(
             sectionDatabases[22],
             where("DateStamp.date", "==", date),
@@ -1819,7 +1881,7 @@ app.get("/section-head", async (req, res) => {
               res.send(err.message);
             });
           break;
-        case "loans.sectionhead@gmail.com":
+        case "zilaparishad.sectionhead@gmail.com":
           q = query(
             sectionDatabases[23],
             where("DateStamp.date", "==", date),
@@ -1882,7 +1944,7 @@ app.get("/section-head", async (req, res) => {
               res.send(err.message);
             });
           break;
-        case "zilaparishad.sectionhead@gmail.com":
+        case "admnorth.sectionhead@gmail.com":
           q = query(
             sectionDatabases[24],
             where("DateStamp.date", "==", date),
@@ -1945,7 +2007,7 @@ app.get("/section-head", async (req, res) => {
               res.send(err.message);
             });
           break;
-        case "admnorth.sectionhead@gmail.com":
+        case "adps.sectionhead@gmail.com":
           q = query(
             sectionDatabases[25],
             where("DateStamp.date", "==", date),
@@ -1994,69 +2056,6 @@ app.get("/section-head", async (req, res) => {
                 } else {
                   res.render("sectionHead", {
                     section: sections[25],
-                    date: dateString,
-                    received: received,
-                    disposed: disposed,
-                    oldPendency: prevSectionInfo[0].pendency,
-                    sessionID: id,
-                    message: req.flash("message"),
-                  });
-                }
-              });
-            })
-            .catch((err) => {
-              res.send(err.message);
-            });
-          break;
-        case "adps.sectionhead@gmail.com":
-          q = query(
-            sectionDatabases[26],
-            where("DateStamp.date", "==", date),
-            where("DateStamp.month", "==", month),
-            where("DateStamp.year", "==", year)
-          );
-          querySnap = getDocs(q);
-          querySnap
-            .then((response) => {
-              sectionInfo = response.docs.map((item) => {
-                return { ...item.data(), id: item.id };
-              });
-              let received;
-              let disposed;
-              let id;
-              if (sectionInfo[0] === undefined) {
-                received = 0;
-                disposed = 0;
-                id = "null";
-              } else {
-                received = sectionInfo[0].Received;
-                disposed = sectionInfo[0].disposed;
-                id = sectionInfo[0].id;
-              }
-              q = query(
-                sectionDatabases[26],
-                where("DateStamp.date", "==", date - 1),
-                where("DateStamp.month", "==", month),
-                where("DateStamp.year", "==", year)
-              );
-              querySnap = getDocs(q);
-              querySnap.then((response) => {
-                prevSectionInfo = response.docs.map((item) => {
-                  return { ...item.data(), id: item.id };
-                });
-                if (prevSectionInfo.length === 0) {
-                  res.render("sectionHead", {
-                    section: sections[26],
-                    date: dateString,
-                    received: received,
-                    disposed: disposed,
-                    oldPendency: 0,
-                    sessionID: id,
-                    message: req.flash("message"),
-                  });
-                } else {
-                  res.render("sectionHead", {
-                    section: sections[26],
                     date: dateString,
                     received: received,
                     disposed: disposed,

@@ -13,12 +13,12 @@ The portal has 3 kinds of users-
 ![OIC Section](./assets/Img/Oic_section.png)
 
 <hr>
-## Technologies used
+<h3> Technologies used </h3><br>
 -Html, CSS, Javascript, Bootstrap used for frontend<br>
 -Nodejs for backend<br>
 -Firebase for authentication and database
 <hr>
-### Project Installation Instructions
+<h3> Project Installation Instructions</h3>
 
 Dak Management System requires [Node.js](https://nodejs.org/) v16.17.1 to run.
 
@@ -43,4 +43,4 @@ Verify the deployment by navigating to your server address in your preferred bro
 http://localhost:3000/
 ```
 <hr>
-_**Contributors** - [Abhigyan Jha](https://github.com/AJSteel01) , [Sahil Patani](https://github.com/sahilpatani1012)_
+<b>Contributors<b> - <i>[Abhigyan Jha](https://github.com/AJSteel01) , [Sahil Patani](https://github.com/sahilpatani1012)<i>

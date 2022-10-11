@@ -347,7 +347,7 @@ app.get("/delete", async (req, res) => {
   }
   for (let i = 0; i < sectionDatabases.length; i++) {
     let docRef = doc(database, sections[i], collectionIDs[i]);
-    console.log(sections[i],collectionIDs[i]);
+    console.log(sections[i], collectionIDs[i]);
     await deleteDoc(docRef);
   }
 });
@@ -2194,12 +2194,15 @@ app.post("/daily-report", async (req, res) => {
       });
     }
     let tempall = [];
-    if (allSection.length === 0 || prevPendencies.length === 0) {
+    if (allSection.length === 0) {
       res.render("reportError");
       return;
     }
     for (let i = 0; i < sections.length; i++) {
-      let denominator = allSection[i].Received + prevPendencies[i].pendency;
+      let prevPendency = 0;
+      if (prevPendencies.length != 0)
+        prevPendency = prevPendencies[i].pendency;
+      let denominator = allSection[i].Received + prevPendency;
       let efficiency = Math.round((allSection[i].disposed / denominator) * 100);
       if (isNaN(efficiency)) {
         efficiency = 0;
@@ -2221,17 +2224,30 @@ app.post("/daily-report", async (req, res) => {
       where("DateStamp.month", "==", month),
       where("DateStamp.year", "==", year)
     );
+    let q1 = query(
+      collection(database, section),
+      where("DateStamp.date", "==", day - 1),
+      where("DateStamp.month", "==", month),
+      where("DateStamp.year", "==", year)
+    );
     let sectionData = [];
+    let sectionDataPrev = []
     let querySnap = await getDocs(q);
+    let prevquerySnap = await getDocs(q1);
     querySnap.forEach((docFile) => {
       sectionData.push(docFile.data());
+    });
+    prevquerySnap.forEach((docFile) => {
+      sectionDataPrev.push(docFile.data());
     });
     if (sectionData.length === 0) {
       res.render("reportError");
       return;
     }
-    let denominator = sectionData[0].Received + sectionData[0].pendency;
-    let efficiency = sectionData[0].disposed / denominator;
+    let pendency = 0;
+    if(sectionDataPrev.length !=0) pendency = sectionDataPrev[0].pendency;
+    let denominator = sectionData[0].Received + pendency;
+    let efficiency = Math.round((sectionData[0].disposed / denominator)*100);
     if (isNaN(efficiency)) {
       efficiency = 0;
     }
